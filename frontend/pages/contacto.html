@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - DinoKing Games</title>
+    <link rel="icon" href="../assets/imgs/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|PT+Sans:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/normalize.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../services/api.js" defer></script>
+    <script src="../assets/js/auth.js" defer></script>
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <main class="container">
+        <h2 class="m0 text-center">Contacto</h2>
+        <div class="grid centrar-contacto">
+            <div class="columnas-12">
+                <img src="../assets/imgs/dino_telefono.png" alt="Contacto" class="imagen-contacto">
+            </div>
+            <div class="formulario-contacto columnas-10">
+                <form action="#" id="contactForm">
+                    <div class="campo">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Tu Nombre" required>
+                    </div>
+
+                    <div class="campo">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Tu Correo Electrónico" required>
+                    </div>
+
+                    <div class="campo">
+                        <label for="mensaje">Mensaje</label>
+                        <textarea id="mensaje" name="mensaje" placeholder="Ingresa tu Mensaje" required></textarea>
+                    </div>
+
+                    <div class="campo enviar">
+                        <input type="submit" value="Enviar" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+    <div id="modals-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadComponent('header-container', '../components/header_simple.html');
+            await loadComponent('footer-container', '../components/footer.html');
+            await loadComponent('modals-container', '../components/auth-modals.html');
+            
+            // Contact form handler (placeholder - not connected to backend)
+            const form = document.getElementById('contactForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    alert('Gracias por tu mensaje. Nos pondremos en contacto pronto.');
+                    form.reset();
+                });
+            }
+        });
+
+        async function loadComponent(containerId, componentPath) {
+            try {
+                const response = await fetch(componentPath);
+                const html = await response.text();
+                document.getElementById(containerId).innerHTML = html;
+            } catch (error) {
+                console.error(`Error loading component ${componentPath}:`, error);
+            }
+        }
+    </script>
+</body>
+</html>

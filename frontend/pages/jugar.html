@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draftosaurus - DinoKing Games</title>
+  <link rel="icon" href="../assets/imgs/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../assets/css/normalize.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../services/api.js" defer></script>
+  <script src="../assets/js/auth.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+</head>
+<body>
+<div id="header-container"></div>
+
+<section id="pantalla-inicio" class="pantalla-inicio">
+  <div class="inicio-card">
+    <img src="../assets/imgs/dinoIntroFinal.gif" alt="Draftosaurus" class="intro-dino" width="220" height="220">
+    <h2 class="m0 text-center">Draftosaurus</h2>
+    <p class="text-center">¿Qué querés hacer?</p>
+    <div class="actions-row" style="display:flex; gap:12px; justify-content:center;">
+      <button id="btn-reanudar" class="btn btn-secondary">Reanudar</button>
+      <button id="btn-nueva" class="btn btn-primary">Partida nueva</button>
+    </div>
+    <p id="start-error" class="init-error hidden"></p>
+  </div>
+</section>
+
+<div class="container" style="margin-top:16px;">
+  <p id="mensaje" class="text-center"></p>
+</div>
+
+<div class="juego-multi">
+  <div class="contenedor-juego hidden" data-player="1">
+    <h3>
+      <span id="player1-label">Jugador 1</span>
+      · Puntos: <span id="score-1">0</span>
+    </h3>
+    <div class="tablero" id="tablero-1">
+      <img src="../assets/imgs/juego.jpg" alt="Tablero" class="imagen-tablero">
+    </div>
+    <div class="bandeja">
+      <h4>Dinosaurios</h4>
+      <div class="dinosaurios" id="bandeja-1"></div>
+      <div class="dice-wrap">
+        <img id="dice-1" class="dice-img inactive" src="../assets/imgs/dado/dado1.png" alt="Dado jugador 1" data-player="1">
+      </div>
+    </div>
+  </div>
+
+  <div class="contenedor-juego hidden" data-player="2">
+    <h3>Jugador 2 · Puntos: <span id="score-2">0</span></h3>
+    <div class="tablero" id="tablero-2">
+      <img src="../assets/imgs/juego.jpg" alt="Tablero" class="imagen-tablero">
+    </div>
+    <div class="bandeja">
+      <h4>Dinosaurios</h4>
+      <div class="dinosaurios" id="bandeja-2"></div>
+      <div class="dice-wrap">
+        <img id="dice-2" class="dice-img inactive" src="../assets/imgs/dado/dado2.png" alt="Dado jugador 2" data-player="2">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="footer-container"></div>
+<div id="modals-container"></div>
+
+<script>
+  // Set up game user info from session
+  window.GAME_USER_ID = 0;
+  window.GAME_USER_NAME = 'Jugador 1';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadComponent('header-container', '../components/header_simple.html');
+    await loadComponent('footer-container', '../components/footer.html');
+    await loadComponent('modals-container', '../components/auth-modals.html');
+    
+    // Get user session and update game info
+    if (typeof window.API !== 'undefined') {
+      try {
+        const session = await window.API.auth.getSession();
+        if (session && session.user) {
+          window.GAME_USER_ID = session.user.id || 0;
+          window.GAME_USER_NAME = session.user.nombre || session.user.name || 'Jugador 1';
+          const player1Label = document.getElementById('player1-label');
+          if (player1Label) {
+            player1Label.textContent = window.GAME_USER_NAME;
+          }
+        }
+      } catch (error) {
+        console.log('No active session, using default player name');
+      }
+    }
+  });
+
+  async function loadComponent(containerId, componentPath) {
+    try {
+      const response = await fetch(componentPath);
+      const html = await response.text();
+      document.getElementById(containerId).innerHTML = html;
+    } catch (error) {
+      console.error(`Error loading component ${componentPath}:`, error);
+    }
+  }
+</script>
+</body>
+</html>
