@@ -371,7 +371,8 @@ function normalizeName(s) { return (s || '').normalize('NFD').replace(/[\u0300-\
 const NAME_TO_ZONE_NORM = Object.fromEntries(Object.entries(RECINTO_MAP).map(([id, name]) => [normalizeName(name), Number(id)]));
 
 const IMG_BASE = (() => { try { return new URL('../imgs/', document.currentScript.src).href; } catch { return '/assets/imgs/'; } })();
-const API_URL = new URL(window.location.href);
+// Updated to use backend game API endpoint
+const API_URL = new URL('../backend/game-api.php', window.location.href);
 const USER_ID = (typeof window !== 'undefined' && window.GAME_USER_ID) ? window.GAME_USER_ID : 0;
 const STORAGE_KEY = 'drafto_game_id';
 let gameId = Number(localStorage.getItem(STORAGE_KEY) || 0);
