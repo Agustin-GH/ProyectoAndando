@@ -1,0 +1,88 @@
+<?php
+// Endpoints JSON del juego
+if (isset($_REQUEST['action'])) {
+    require_once APP_PATH . '/Controllers/JuegoControlador.php';
+    JuegoControlador::handleRequest();
+    exit;
+}
+
+// Usuario logueado
+if (session_status() === PHP_SESSION_NONE) session_start();
+$userId = 0;
+$userName = '';
+if (isset($_SESSION['usuario']['id'])) $userId = (int)$_SESSION['usuario']['id'];
+elseif (isset($_SESSION['usuario_id'])) $userId = (int)$_SESSION['usuario_id'];
+elseif (isset($_SESSION['user']['id'])) $userId = (int)$_SESSION['user']['id'];
+
+if (isset($_SESSION['usuario']['nombre'])) $userName = (string)$_SESSION['usuario']['nombre'];
+elseif (isset($_SESSION['user']['nombre'])) $userName = (string)$_SESSION['user']['nombre'];
+elseif (isset($_SESSION['user']['name'])) $userName = (string)$_SESSION['user']['name'];
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Draftosaurus</title>
+  <link rel="stylesheet" href="<?= asset('css/normalize.css') ?>">
+  <link rel="stylesheet" href="<?= asset('css/styles.css') ?>">
+  <script>
+    window.GAME_USER_ID = <?= (int)$userId ?>;
+    window.GAME_USER_NAME = <?= json_encode($userName ?: 'Jugador 1', JSON_UNESCAPED_UNICODE) ?>;
+  </script>
+  <script src="<?= asset('js/main.js') ?>" defer></script>
+</head>
+<body <?= $userName ? 'data-user-name="'.htmlspecialchars($userName, ENT_QUOTES).'"' : '' ?>>
+<?php view_partial('header_simple'); ?>
+
+<section id="pantalla-inicio" class="pantalla-inicio">
+  <div class="inicio-card">
+    <img src="<?= asset('imgs/dinoIntroFinal.gif') ?>" alt="" class="intro-dino" width="220" height="220">
+    <h2 class="m0 text-center">Draftosaurus</h2>
+    <p class="text-center">¿Qué querés hacer?</p>
+    <div class="actions-row" style="display:flex; gap:12px; justify-content:center;">
+      <button id="btn-reanudar" class="btn btn-secondary">Reanudar</button>
+      <button id="btn-nueva" class="btn btn-primary">Partida nueva</button>
+    </div>
+    <p id="start-error" class="init-error hidden"></p>
+  </div>
+</section>
+
+<div class="container" style="margin-top:16px;">
+  <p id="mensaje" class="text-center"></p>
+</div>
+
+<div class="juego-multi">
+  <div class="contenedor-juego hidden" data-player="1">
+    <h3>
+      <span id="player1-label"><?= htmlspecialchars($userName ?: 'Jugador 1', ENT_QUOTES, 'UTF-8') ?></span>
+      · Puntos: <span id="score-1">0</span>
+    </h3>
+    <div class="tablero" id="tablero-1">
+      <img src="<?= asset('imgs/juego.jpg') ?>" alt="Tablero" class="imagen-tablero">
+    </div>
+    <div class="bandeja">
+      <h4>Dinosaurios</h4>
+      <div class="dinosaurios" id="bandeja-1"></div>
+      <div class="dice-wrap">
+        <img id="dice-1" class="dice-img inactive" src="<?= asset('imgs/dado/dado1.png') ?>" alt="Dado jugador 1" data-player="1">
+      </div>
+    </div>
+  </div>
+
+  <div class="contenedor-juego hidden" data-player="2">
+    <h3>Jugador 2 · Puntos: <span id="score-2">0</span></h3>
+    <div class="tablero" id="tablero-2">
+      <img src="<?= asset('imgs/juego.jpg') ?>" alt="Tablero" class="imagen-tablero">
+    </div>
+    <div class="bandeja">
+      <h4>Dinosaurios</h4>
+      <div class="dinosaurios" id="bandeja-2"></div>
+      <div class="dice-wrap">
+        <img id="dice-2" class="dice-img inactive" src="<?= asset('imgs/dado/dado1.png') ?>" alt="Dado jugador 2" data-player="2">
+      </div>
+    </div>
+  </div>
+</div>
+<?php view_partial('footer'); ?>
+</body>
+</html>
